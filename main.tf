@@ -1,14 +1,9 @@
 resource "aws_instance" "firstMachine"
 {
- ami= "ami-ba602bc2"
+ ami= "ami-0bbe6b35405ecebdb"
  instance_type = "t2.micro"
  vpc_security_group_ids = ["${aws_security_group.terraformAccess.id}"]
-
- user_data =<<-EOF
-        #! /bin/bash
-        echo "Hello World" > index.html
-        nohup busybox httpd -f -p "${var.server_port}" &
-        EOF
+ key_name="Ansibletest"
 
  tags {
 	Name = "Terraform-testMachine"
@@ -32,12 +27,20 @@ resource "aws_security_group" "terraformAccess"
                   protocol  = "tcp"
                   cidr_blocks =["0.0.0.0/0"]
 		}
+
+  egress {
+      to_port = 0
+                from_port =0
+                protocol  = "-1"
+                cidr_blocks=["0.0.0.0/0"]
+
+  }
 }
 
 variable "server_port"
 {
  	 description = "The port of server on which server listen"
-  	default = 8080
+  	default = 80
 }
 
 output "ipaddress"
