@@ -1,9 +1,25 @@
+# Adding provider name
+provider "aws"
+{
+	region = "us-west-2"
+
+}
+
+
 resource "aws_instance" "firstMachine"
 {
  ami= "ami-0bbe6b35405ecebdb"
  instance_type = "t2.micro"
  vpc_security_group_ids = ["${aws_security_group.terraformAccess.id}"]
  key_name="Ansibletest"
+ 
+ # Add basic server for test
+ user_data = <<-EOF
+            #!/ bin/ bash
+            echo "Hello, World" > index.html
+            nohup busybox httpd -f -p "${ var.server_port}" &
+            EOF
+
 
  tags {
 	Name = "Terraform-testMachine"
